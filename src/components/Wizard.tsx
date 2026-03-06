@@ -5,6 +5,7 @@ import * as z from 'zod';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, ArrowLeft, Wand2 } from 'lucide-react';
 import { BrandBrief } from '../types';
+import { PREDEFINED_PALETTES } from '../constants';
 
 const briefSchema = z.object({
   businessName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -18,21 +19,13 @@ const briefSchema = z.object({
   customColors: z.string().optional(),
 });
 
-const PREDEFINED_PALETTES = [
-  { id: 'vibrant', name: 'Vibrante', colors: ['#FF3366', '#FF9933', '#33CC99'] },
-  { id: 'pastel', name: 'Pastel', colors: ['#FFD1DC', '#B5EAD7', '#C7CEEA'] },
-  { id: 'dark', name: 'Oscuro & Elegante', colors: ['#1A1A2E', '#16213E', '#E94560'] },
-  { id: 'earth', name: 'Tonos Tierra', colors: ['#8D6E63', '#D7CCC8', '#A1887F'] },
-  { id: 'minimal', name: 'Minimalista', colors: ['#000000', '#7F7F7F', '#F5F5F5'] },
-];
-
 interface WizardProps {
   onSubmit: (data: BrandBrief) => void;
 }
 
 export default function Wizard({ onSubmit }: WizardProps) {
   const [step, setStep] = useState(1);
-  const totalSteps = 3;
+  const totalSteps = 4;
 
   const { register, handleSubmit, formState: { errors }, trigger, watch, setValue } = useForm<BrandBrief>({
     resolver: zodResolver(briefSchema),
@@ -53,6 +46,7 @@ export default function Wizard({ onSubmit }: WizardProps) {
     let fieldsToValidate: any[] = [];
     if (step === 1) fieldsToValidate = ['businessName', 'description'];
     if (step === 2) fieldsToValidate = ['audienceType', 'audienceTags'];
+    // Step 3 (Sliders) and Step 4 (Colors) don't strictly need validation as they have defaults/optional
     
     const isStepValid = await trigger(fieldsToValidate as any);
     if (isStepValid) {
@@ -175,8 +169,8 @@ export default function Wizard({ onSubmit }: WizardProps) {
                 className="space-y-8"
               >
                 <div>
-                  <h3 className="text-lg font-semibold mb-1">3. Personalidad y Estilo</h3>
-                  <p className="text-sm text-gray-500 mb-4">Define el "vibe" y los colores de tu marca.</p>
+                  <h3 className="text-lg font-semibold mb-1">3. Personalidad</h3>
+                  <p className="text-sm text-gray-500 mb-4">Define el "vibe" de tu marca.</p>
                 </div>
 
                 <div className="space-y-6">
@@ -199,10 +193,25 @@ export default function Wizard({ onSubmit }: WizardProps) {
                     onChange={(val) => setValue('styleFunSerious', val)} 
                   />
                 </div>
+              </motion.div>
+            )}
 
-                <div className="pt-4 border-t border-gray-100">
-                  <label className="block text-sm font-medium text-gray-700 mb-3">Gamas de colores preferidas (Opcional)</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            {step === 4 && (
+              <motion.div
+                key="step4"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-8"
+              >
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">4. Estilo Visual</h3>
+                  <p className="text-sm text-gray-500 mb-4">Elige los colores que representarán a tu marca.</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Gamas de colores preferidas</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
                     {PREDEFINED_PALETTES.map((palette) => (
                       <div 
                         key={palette.id}
@@ -226,12 +235,15 @@ export default function Wizard({ onSubmit }: WizardProps) {
                     ))}
                   </div>
                   
-                  <label className="block text-sm font-medium text-gray-700 mb-1">O ingresa tus propios códigos (HEX)</label>
-                  <input 
-                    {...register('customColors')}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
-                    placeholder="Ej: #FF5733, #33FF57"
-                  />
+                  <div className="pt-6 border-t border-gray-100">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">¿Tienes colores específicos?</label>
+                    <p className="text-xs text-gray-500 mb-2">Ingresa tus códigos HEX separados por coma.</p>
+                    <input 
+                      {...register('customColors')}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+                      placeholder="Ej: #FF5733, #33FF57"
+                    />
+                  </div>
                 </div>
               </motion.div>
             )}
