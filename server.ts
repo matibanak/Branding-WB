@@ -88,6 +88,7 @@ async function startServer() {
       }
 
       const results = [];
+      const targetAspectRatio = formData.imageType === 'ooh' ? "16:9" : "1:1";
       
       for (const prompt of prompts) {
         try {
@@ -96,7 +97,7 @@ async function startServer() {
             model: modelName,
             contents: prompt,
             config: {
-              aspectRatio: "1:1",
+              aspectRatio: targetAspectRatio,
             } as any
           });
           

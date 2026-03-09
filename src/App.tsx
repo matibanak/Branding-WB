@@ -55,10 +55,14 @@ export default function App() {
     if (!brandPackage || !draftBrief) return;
     
     try {
+      // Firebase no admite valores 'undefined', así que limpiamos el objeto
+      const safeBrief = JSON.parse(JSON.stringify(draftBrief));
+      const safeResult = JSON.parse(JSON.stringify(brandPackage));
+
       await addDoc(collection(db, "projects"), {
         userId: user.uid,
-        brief: draftBrief,
-        result: brandPackage,
+        brief: safeBrief,
+        result: safeResult,
         createdAt: Date.now()
       });
       alert("¡Proyecto guardado en tu galería!");
