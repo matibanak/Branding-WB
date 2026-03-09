@@ -51,7 +51,7 @@ async function startServer() {
   // The endpoint to generate Image
   app.post('/api/generate-image', async (req, res) => {
     try {
-      const formData: BrandBrief & { imageType?: 'logos' | 'mockups' | 'marketing' } = req.body;
+      const formData: BrandBrief & { imageType?: 'logos' | 'mockups' | 'marketing' | 'ooh' } = req.body;
       const basePrompt = buildPrompt(formData);
       
       let prompts: string[] = [];
@@ -69,6 +69,13 @@ async function startServer() {
           `[URGENT: LEAD GENERATION AD] ${basePrompt} ${marketingInstruction} Style: A modern, sleek digital ad banner showing a person using a computer or phone, with a futuristic overlay.`,
           `[URGENT: FLASH PROMO POSTER] ${basePrompt} ${marketingInstruction} Style: A vibrant, high-energy promotional poster with bold abstract shapes focusing on a '50% OFF' discount concept.`,
           `[URGENT: FREE SHIPPING BANNER] ${basePrompt} ${marketingInstruction} Style: A professional e-commerce delivery banner with a premium box or shipping vehicle and dynamic speed lines.`
+        ];
+      } else if (formData.imageType === 'ooh') {
+        const oohInstruction = "IMPORTANT: Output photorealistic, high-quality urban Out Of Home (OOH) advertising mockups. Integrate the brand seamlessly into the environment. No extra text overlays, just the realistic scene.";
+        prompts = [
+          `[URGENT: BUS STOP AD MOCKUP] ${basePrompt} ${oohInstruction} Style: A modern city bus stop with an illuminated advertising poster displaying the brand. Photorealistic street photography.`,
+          `[URGENT: HIGHWAY BILLBOARD MOCKUP] ${basePrompt} ${oohInstruction} Style: A large, wide highway billboard against a blue sky, showcasing the brand's advertisement. Realistic lighting and scale.`,
+          `[URGENT: STREET MUPI MOCKUP] ${basePrompt} ${oohInstruction} Style: An urban street mupi (freestanding sidewalk advertising display) at night or dusk, glowing with the brand's ad.`
         ];
       } else {
         const logoInstruction = "IMPORTANT: ALWAYS output a clean, high-quality, modern vector-style logo design on a solid bright white background. NO extra text, NO mockups, NO 3d renders, NO brand guideline boards.";
@@ -129,20 +136,10 @@ async function startServer() {
         }
       }
 
-      const validImages = results; // Frontend expects exactly 4 images, so we should try to keep 4.
-      // Wait, let's keep it as is, frontend maps by index. Wait, if it's null it breaks? 
-      // Actually frontend generatedImageUrls uses indices. So retaining nulls is better for order, 
-      // but let's just make validImages the filtered ones like before just to not break API.
-      const cleanedImages = results.filter(r => r !== null);
-
+      const validImages = results;
       
-      if (cleanedImages.length > 0) {
-        // Pad with the first image if some failed, so we always return expected amount
-        const targetLength = formData.imageType === 'logos' ? 4 : 3;
-        while (cleanedImages.length < targetLength) {
-          cleanedImages.push(cleanedImages[0]);
-        }
-        res.json({ success: true, images: cleanedImages });
+      if (validImages.some(img => img !== null)) {
+        res.json({ success: true, images: validImages });
       } else {
         res.status(500).json({ success: false, error: "Failed to extract any images from response" });
       }

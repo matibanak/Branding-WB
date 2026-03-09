@@ -6,6 +6,7 @@ export const generateBrand = async (brief: BrandBrief): Promise<BrandPackage> =>
   let generatedImageUrls: string[] = [];
   let mockupImageUrls: string[] = [];
   let marketingImageUrls: string[] = [];
+  let oohImageUrls: string[] = [];
   try {
     // 1. Generate clean logos
     const resLogos = await fetch('/api/generate-image', {
@@ -16,6 +17,7 @@ export const generateBrand = async (brief: BrandBrief): Promise<BrandPackage> =>
     const dataLogos = await resLogos.json();
     if (dataLogos.success && dataLogos.images && dataLogos.images.length > 0) {
       generatedImageUrls = dataLogos.images.map((img: any) => {
+        if (!img) return undefined;
         if (img.base64Image.startsWith('data:')) return img.base64Image;
         return `data:${img.mimeType};base64,${img.base64Image}`;
       });
@@ -30,6 +32,7 @@ export const generateBrand = async (brief: BrandBrief): Promise<BrandPackage> =>
     const dataMockups = await resMockups.json();
     if (dataMockups.success && dataMockups.images && dataMockups.images.length > 0) {
       mockupImageUrls = dataMockups.images.map((img: any) => {
+        if (!img) return undefined;
         if (img.base64Image.startsWith('data:')) return img.base64Image;
         return `data:${img.mimeType};base64,${img.base64Image}`;
       });
@@ -44,6 +47,22 @@ export const generateBrand = async (brief: BrandBrief): Promise<BrandPackage> =>
     const dataMarketing = await resMarketing.json();
     if (dataMarketing.success && dataMarketing.images && dataMarketing.images.length > 0) {
       marketingImageUrls = dataMarketing.images.map((img: any) => {
+        if (!img) return undefined;
+        if (img.base64Image.startsWith('data:')) return img.base64Image;
+        return `data:${img.mimeType};base64,${img.base64Image}`;
+      });
+    }
+
+    // 4. Generate OOH (Via Publica) creatives
+    const resOoh = await fetch('/api/generate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...brief, imageType: 'ooh' })
+    });
+    const dataOoh = await resOoh.json();
+    if (dataOoh.success && dataOoh.images && dataOoh.images.length > 0) {
+      oohImageUrls = dataOoh.images.map((img: any) => {
+        if (!img) return undefined;
         if (img.base64Image.startsWith('data:')) return img.base64Image;
         return `data:${img.mimeType};base64,${img.base64Image}`;
       });
@@ -294,9 +313,9 @@ export const generateBrand = async (brief: BrandBrief): Promise<BrandPackage> =>
         { id: crypto.randomUUID(), name: "Envío Gratis", keyword: "delivery,box,shipping", copy: "Envío Gratis a todo el país.", image_url: marketingImageUrls[2] },
       ],
       ooh: [
-        { id: crypto.randomUUID(), name: "Cartel en Autobús", keyword: "bus stop,city,billboard" },
-        { id: crypto.randomUUID(), name: "Valla Publicitaria (Billboard)", keyword: "highway billboard,advertising" },
-        { id: crypto.randomUUID(), name: "Mupi en Vía Pública", keyword: "street poster,urban advertising" },
+        { id: crypto.randomUUID(), name: "Cartel en Autobús", keyword: "bus stop,city,billboard", image_url: oohImageUrls[0] },
+        { id: crypto.randomUUID(), name: "Valla Publicitaria (Billboard)", keyword: "highway billboard,advertising", image_url: oohImageUrls[1] },
+        { id: crypto.randomUUID(), name: "Mupi en Vía Pública", keyword: "street poster,urban advertising", image_url: oohImageUrls[2] },
       ]
     }
   };

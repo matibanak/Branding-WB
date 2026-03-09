@@ -20,8 +20,9 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       onLoginSuccess();
     } catch (err: any) {
       console.error("Error signing in with Google:", err);
-      // More specific error handling could go here based on err.code
-      setError("Hubo un problema al iniciar sesión. Por favor intenta de nuevo.");
+      // Muestra el error específico para ayudar a depurarlo en Vercel
+      const errorMessage = err.message || "Por favor intenta de nuevo.";
+      setError(`Hubo un problema al iniciar sesión: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

@@ -275,7 +275,7 @@ export default function Dashboard({ brand, onReset, onEdit, onSave, onRegenerate
         <Section title="Vía Pública (OOH)" icon={<Megaphone className="w-5 h-5" />}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {brand.mockups?.ooh.map((mockup, idx) => (
-              <ImageMockup key={mockup.id} keyword={mockup.keyword} title={mockup.name} className={idx === 0 ? "lg:col-span-2 aspect-[21/9]" : "aspect-[4/3]"}>
+              <ImageMockup key={mockup.id} keyword={mockup.keyword} title={mockup.name} imageUrlOverride={mockup.image_url} className={idx === 0 ? "lg:col-span-2 aspect-[21/9]" : "aspect-[4/3]"}>
                 <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
                 <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-8 text-center">
                   <div className="w-48 mb-6 drop-shadow-xl [&_text]:!fill-white [&_path]:!stroke-white" dangerouslySetInnerHTML={{ __html: primaryLogoSvg }} />
@@ -356,9 +356,11 @@ function ImageMockup({ keyword, title, children, className = "aspect-square", im
         )}
         
         {/* Overlay Content (Logos, Texts, Gradients) */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          {children}
-        </div>
+        {!imageUrlOverride && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            {children}
+          </div>
+        )}
 
         {/* Download Button */}
         {imageUrlOverride && (
