@@ -52,7 +52,7 @@ export default async function handler(req: any, res: any) {
     let prompts: string[] = [];
     
     if (formData.imageType === 'mockups') {
-      const mockupInstruction = "IMPORTANT: Output highly aesthetic, award-winning Behance-style visual presentations. Focus on premium editorial layouts and physical mockups. Use stunning studio lighting.";
+      const mockupInstruction = "IMPORTANT: Output highly aesthetic, award-winning Behance-style visual presentations in 8k resolution. Focus on ultra-realistic, premium editorial layouts and physical mockups. Use stunning studio lighting, hyper-detailed textures, and crisp focus.";
       prompts = [
         `[URGENT: PREMIUM STATIONERY MOCKUP] ${basePrompt} ${mockupInstruction} Style: Realistic mockup showing business cards, letterheads, or packaging. Beautiful studio lighting.`,
         `[URGENT: HIGH-IMPACT ADVERTISING KEY VISUAL] ${basePrompt} ${mockupInstruction} Style: Stunning campaign key visual, premium advertising poster with 3D elements or photography.`,
@@ -73,7 +73,7 @@ export default async function handler(req: any, res: any) {
         `[URGENT: STREET MUPI MOCKUP] ${basePrompt} ${oohInstruction} Style: An urban street mupi (freestanding sidewalk advertising display) at night or dusk, glowing with the brand's ad.`
       ];
     } else {
-      const logoInstruction = "IMPORTANT: ALWAYS output a clean, high-quality, modern vector-style logo design on a solid bright white background. NO extra text, NO mockups, NO 3d renders, NO brand guideline boards.";
+      const logoInstruction = "IMPORTANT: ALWAYS output a clean, ultra-high-quality (8k resolution) modern flat vector-style logo design on a solid bright white background. It must look like crisp, perfect vector illustration. NO gradients, NO pixelation, NO extra text, NO mockups, NO 3d renders, NO brand guideline boards. Just the flat logo.";
       prompts = [
         `[URGENT: MINIMALIST ISOLOGO ONLY] ${basePrompt} ${logoInstruction} Style: Clean vector, flat minimalist icon combined with a short lettermark.`,
         `[URGENT: ABSTRACT MONOGRAM ONLY] ${basePrompt} ${logoInstruction} Style: Abstract geometric monogram, bold shapes.`,
