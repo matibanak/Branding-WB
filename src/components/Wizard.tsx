@@ -162,7 +162,7 @@ export default function Wizard({ onSubmit, initialData }: WizardProps) {
                         key={type} 
                         className={`
                           cursor-pointer border rounded-lg p-3 text-center transition-all
-                          ${watch('audienceType') === type ? 'border-black bg-gray-50 ring-1 ring-black' : 'border-gray-200 hover:border-gray-300'}
+                          ${watch('audienceType') === type ? 'border-black bg-gray-50 ring-1 ring-black text-black' : 'border-gray-200 hover:border-gray-300 text-gray-600'}
                         `}
                       >
                         <input 
